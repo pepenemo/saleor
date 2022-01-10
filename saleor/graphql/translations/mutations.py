@@ -72,7 +72,7 @@ class BaseTranslateMutation(ModelMutation):
 
         node_id = data["id"]
         node_type, node_pk = graphene.Node.from_global_id(node_id)
-        print("node_type", node_type, type(node_type))
+
         # This mutation accepts either model IDs or translatable content IDs. Below we
         # check if provided ID refers to a translatable content which matches with the
         # expected model_type. If so, we transform the translatable content ID to model
@@ -427,16 +427,6 @@ class PageTranslate(BaseTranslateMutation):
         error_type_class = TranslationError
         error_type_field = "translation_errors"
         permissions = (SitePermissions.MANAGE_TRANSLATIONS,)
-
-    @classmethod
-    def clean_node_id__(cls, **data):
-        node_id, model_type = super().clean_node_id(**data)
-        print("clean_model_type", model_type, type(model_type))
-        if str(model_type) == "PageTranslatableContent":
-            _, node_pk = graphene.Node.from_global_id(node_id)
-            node_id = graphene.Node.to_global_id(Page, node_pk)
-            return node_id, Page
-        return node_id, model_type
 
 
 class ShopSettingsTranslationInput(graphene.InputObjectType):
