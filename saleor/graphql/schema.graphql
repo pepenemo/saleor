@@ -207,14 +207,14 @@ type Allocation implements Node {
 
 type App implements Node & ObjectWithMetadata {
   id: ID!
-  name: String
-  created: DateTime
-  isActive: Boolean
-  permissions: [Permission]
-  tokens: [AppToken]
   privateMetadata: [MetadataItem]!
   metadata: [MetadataItem]!
+  permissions: [Permission]
+  created: DateTime
+  isActive: Boolean
+  name: String
   type: AppTypeEnum
+  tokens: [AppToken]
   webhooks: [Webhook]
   aboutApp: String
   dataPrivacy: String
@@ -295,13 +295,13 @@ enum AppErrorCode {
 
 type AppExtension implements Node {
   id: ID!
-  app: App!
+  permissions: [Permission!]!
   label: String!
   url: String!
   view: AppExtensionViewEnum!
   type: AppExtensionTypeEnum!
   target: AppExtensionTargetEnum!
-  permissions: [Permission!]!
+  app: App!
   accessToken: String
 }
 
@@ -367,13 +367,13 @@ input AppInstallInput {
 }
 
 type AppInstallation implements Node & Job {
-  appName: String!
-  manifestUrl: String!
   id: ID!
   status: JobStatusEnum!
   createdAt: DateTime!
   updatedAt: DateTime!
   message: String
+  appName: String!
+  manifestUrl: String!
 }
 
 type AppManifestExtension {
@@ -402,9 +402,9 @@ input AppSortingInput {
 }
 
 type AppToken implements Node {
+  id: ID!
   name: String
   authToken: String
-  id: ID!
 }
 
 type AppTokenCreate {
@@ -637,8 +637,8 @@ type AttributeTranslate {
 
 type AttributeTranslation implements Node {
   id: ID!
-  name: String!
   language: LanguageDisplay!
+  name: String!
 }
 
 enum AttributeTypeEnum {
@@ -753,9 +753,9 @@ type AttributeValueTranslate {
 
 type AttributeValueTranslation implements Node {
   id: ID!
+  language: LanguageDisplay!
   name: String!
   richText: JSONString
-  language: LanguageDisplay!
 }
 
 input AttributeValueTranslationInput {
@@ -819,6 +819,8 @@ input CatalogueInput {
 
 type Category implements Node & ObjectWithMetadata {
   id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   seoTitle: String
   seoDescription: String
   name: String!
@@ -826,8 +828,6 @@ type Category implements Node & ObjectWithMetadata {
   slug: String!
   parent: Category
   level: Int!
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   descriptionJson: JSONString @deprecated(reason: "This field will be removed in Saleor 4.0. Use the `description` field instead.")
   ancestors(before: String, after: String, first: Int, last: Int): CategoryCountableConnection
   products(channel: String, before: String, after: String, first: Int, last: Int): ProductCountableConnection
@@ -911,11 +911,11 @@ type CategoryTranslate {
 
 type CategoryTranslation implements Node {
   id: ID!
+  language: LanguageDisplay!
   seoTitle: String
   seoDescription: String
   name: String
   description: JSONString
-  language: LanguageDisplay!
   descriptionJson: JSONString @deprecated(reason: "This field will be removed in Saleor 4.0. Use the `description` field instead.")
 }
 
@@ -929,8 +929,8 @@ type Channel implements Node {
   id: ID!
   name: String!
   isActive: Boolean!
-  slug: String!
   currencyCode: String!
+  slug: String!
   hasOrders: Boolean!
   defaultCountry: CountryDisplay!
 }
@@ -1007,6 +1007,9 @@ input ChannelUpdateInput {
 }
 
 type Checkout implements Node & ObjectWithMetadata {
+  id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   created: DateTime!
   lastChange: DateTime!
   user: User
@@ -1018,14 +1021,11 @@ type Checkout implements Node & ObjectWithMetadata {
   discountName: String
   translatedDiscountName: String
   voucherCode: String
-  giftCards: [GiftCard]
-  id: ID!
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   availableShippingMethods: [ShippingMethod]!
   availableCollectionPoints: [Warehouse!]!
   availablePaymentGateways: [PaymentGateway!]!
   email: String
+  giftCards: [GiftCard]
   isShippingRequired: Boolean!
   quantity: Int!
   stockReservationExpires: DateTime
@@ -1251,13 +1251,13 @@ type ChoiceValue {
 
 type Collection implements Node & ObjectWithMetadata {
   id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   seoTitle: String
   seoDescription: String
   name: String!
   description: JSONString
   slug: String!
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   channel: String
   descriptionJson: JSONString @deprecated(reason: "This field will be removed in Saleor 4.0. Use the `description` field instead.")
   products(filter: ProductFilterInput, sortBy: ProductOrder, before: String, after: String, first: Int, last: Int): ProductCountableConnection
@@ -1425,11 +1425,11 @@ type CollectionTranslate {
 
 type CollectionTranslation implements Node {
   id: ID!
+  language: LanguageDisplay!
   seoTitle: String
   seoDescription: String
   name: String
   description: JSONString
-  language: LanguageDisplay!
   descriptionJson: JSONString @deprecated(reason: "This field will be removed in Saleor 4.0. Use the `description` field instead.")
 }
 
@@ -1855,15 +1855,15 @@ type DeletePrivateMetadata {
 union DeliveryMethod = Warehouse | ShippingMethod
 
 type DigitalContent implements Node & ObjectWithMetadata {
+  id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   useDefaultSettings: Boolean!
   automaticFulfillment: Boolean!
   contentFile: String!
   maxDownloads: Int
   urlValidDays: Int
   urls: [DigitalContentUrl]
-  id: ID!
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   productVariant: ProductVariant!
 }
 
@@ -1914,10 +1914,10 @@ input DigitalContentUploadInput {
 }
 
 type DigitalContentUrl implements Node {
+  id: ID!
   content: DigitalContent!
   created: DateTime!
   downloadNum: Int!
-  id: ID!
   url: String
   token: UUID!
 }
@@ -2073,14 +2073,14 @@ enum ExportEventsEnum {
 
 type ExportFile implements Node & Job {
   id: ID!
-  user: User
-  app: App
   status: JobStatusEnum!
   createdAt: DateTime!
   updatedAt: DateTime!
   message: String
   url: String
   events: [ExportEvent!]
+  user: User
+  app: App
 }
 
 type ExportFileCountableConnection {
@@ -2224,12 +2224,12 @@ type FileUpload {
 
 type Fulfillment implements Node & ObjectWithMetadata {
   id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   fulfillmentOrder: Int!
   status: FulfillmentStatus!
   trackingNumber: String!
   created: DateTime!
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   lines: [FulfillmentLine]
   statusDisplay: String
   warehouse: Warehouse
@@ -2305,26 +2305,26 @@ type GatewayConfigLine {
 scalar GenericScalar
 
 type GiftCard implements Node & ObjectWithMetadata {
-  code: String!
-  isActive: Boolean!
-  expiryDate: Date
-  tag: String
-  created: DateTime!
-  lastUsedOn: DateTime
-  initialBalance: Money
-  currentBalance: Money
   id: ID!
   privateMetadata: [MetadataItem]!
   metadata: [MetadataItem]!
   displayCode: String!
+  code: String!
+  created: DateTime!
   createdBy: User
   usedBy: User
   createdByEmail: String
   usedByEmail: String
+  lastUsedOn: DateTime
+  expiryDate: Date
   app: App
   product: Product
   events: [GiftCardEvent!]!
+  tag: String
   boughtInChannel: String
+  isActive: Boolean!
+  initialBalance: Money
+  currentBalance: Money
   user: User @deprecated(reason: "This field will be removed in Saleor 4.0. Use `createdBy` field instead.")
   endDate: DateTime @deprecated(reason: "This field will be removed in Saleor 4.0. Use `expiryDate` field instead.")
   startDate: DateTime @deprecated(reason: "This field will be removed in Saleor 4.0.")
@@ -2542,8 +2542,8 @@ input GiftCardUpdateInput {
 type Group implements Node {
   id: ID!
   name: String!
-  permissions: [Permission]
   users: [User]
+  permissions: [Permission]
   userCanManage: Boolean!
 }
 
@@ -2570,14 +2570,14 @@ input IntRangeInput {
 
 type Invoice implements ObjectWithMetadata & Job & Node {
   id: ID!
+  privateMetadata: [MetadataItem]!
   metadata: [MetadataItem]!
   status: JobStatusEnum!
-  number: String
-  externalUrl: String
-  privateMetadata: [MetadataItem]!
   createdAt: DateTime!
   updatedAt: DateTime!
   message: String
+  number: String
+  externalUrl: String
   url: String
 }
 
@@ -3512,10 +3512,10 @@ enum MeasurementUnitsEnum {
 
 type Menu implements Node & ObjectWithMetadata {
   id: ID!
-  name: String!
-  slug: String!
   privateMetadata: [MetadataItem]!
   metadata: [MetadataItem]!
+  name: String!
+  slug: String!
   items: [MenuItem]
 }
 
@@ -3683,8 +3683,8 @@ type MenuItemTranslate {
 
 type MenuItemTranslation implements Node {
   id: ID!
-  name: String!
   language: LanguageDisplay!
+  name: String!
 }
 
 type MenuItemUpdate {
@@ -4054,6 +4054,8 @@ interface ObjectWithMetadata {
 
 type Order implements Node & ObjectWithMetadata {
   id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   created: DateTime!
   status: OrderStatus!
   user: User
@@ -4063,17 +4065,6 @@ type Order implements Node & ObjectWithMetadata {
   shippingMethodName: String
   collectionPointName: String
   channel: Channel!
-  shippingPrice: TaxedMoney!
-  shippingTaxRate: Float!
-  token: String!
-  voucher: Voucher
-  giftCards: [GiftCard]
-  displayGrossPrices: Boolean!
-  customerNote: String!
-  weight: Weight
-  redirectUrl: String
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   fulfillments: [Fulfillment]!
   lines: [OrderLine]!
   actions: [OrderAction]!
@@ -4090,6 +4081,15 @@ type Order implements Node & ObjectWithMetadata {
   total: TaxedMoney!
   undiscountedTotal: TaxedMoney!
   shippingMethod: ShippingMethod @deprecated(reason: "This field will be removed in Saleor 4.0. Use `deliveryMethod` instead.")
+  shippingPrice: TaxedMoney!
+  shippingTaxRate: Float!
+  token: String!
+  voucher: Voucher
+  giftCards: [GiftCard]
+  displayGrossPrices: Boolean!
+  customerNote: String!
+  weight: Weight
+  redirectUrl: String
   subtotal: TaxedMoney!
   statusDisplay: String
   canFinalize: Boolean!
@@ -4170,10 +4170,10 @@ enum OrderDirection {
 type OrderDiscount implements Node {
   id: ID!
   type: OrderDiscountType!
-  valueType: DiscountValueTypeEnum!
-  value: PositiveDecimal!
   name: String
   translatedName: String
+  valueType: DiscountValueTypeEnum!
+  value: PositiveDecimal!
   reason: String
   amount: Money!
 }
@@ -4621,6 +4621,8 @@ type OrderVoid {
 
 type Page implements Node & ObjectWithMetadata {
   id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   seoTitle: String
   seoDescription: String
   title: String!
@@ -4630,8 +4632,6 @@ type Page implements Node & ObjectWithMetadata {
   slug: String!
   pageType: PageType!
   created: DateTime!
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   contentJson: JSONString! @deprecated(reason: "This field will be removed in Saleor 4.0. Use the `content` field instead.")
   translation(languageCode: LanguageCodeEnum!): PageTranslation
   attributes: [SelectedAttribute!]!
@@ -4776,11 +4776,11 @@ type PageTranslate {
 
 type PageTranslation implements Node {
   id: ID!
+  language: LanguageDisplay!
   seoTitle: String
   seoDescription: String
   title: String
   content: JSONString
-  language: LanguageDisplay!
   contentJson: JSONString @deprecated(reason: "This field will be removed in Saleor 4.0. Use the `content` field instead.")
 }
 
@@ -4793,10 +4793,10 @@ input PageTranslationInput {
 
 type PageType implements Node & ObjectWithMetadata {
   id: ID!
-  name: String!
-  slug: String!
   privateMetadata: [MetadataItem]!
   metadata: [MetadataItem]!
+  name: String!
+  slug: String!
   attributes: [Attribute]
   availableAttributes(filter: AttributeFilterInput, before: String, after: String, first: Int, last: Int): AttributeCountableConnection
   hasPages: Boolean
@@ -4884,6 +4884,8 @@ type PasswordChange {
 
 type Payment implements Node & ObjectWithMetadata {
   id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   gateway: String!
   isActive: Boolean!
   created: DateTime!
@@ -4893,8 +4895,6 @@ type Payment implements Node & ObjectWithMetadata {
   order: Order
   paymentMethodType: String!
   customerIpAddress: String
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   chargeStatus: PaymentChargeStatusEnum!
   actions: [OrderAction]!
   total: Money
@@ -5224,6 +5224,8 @@ input PriceRangeInput {
 
 type Product implements Node & ObjectWithMetadata {
   id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   seoTitle: String
   seoDescription: String
   name: String!
@@ -5236,8 +5238,6 @@ type Product implements Node & ObjectWithMetadata {
   weight: Weight
   defaultVariant: ProductVariant
   rating: Float
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   channel: String
   descriptionJson: JSONString @deprecated(reason: "This field will be removed in Saleor 4.0. Use the `description` field instead.")
   thumbnail(size: Int): Image
@@ -5584,24 +5584,24 @@ type ProductTranslate {
 
 type ProductTranslation implements Node {
   id: ID!
+  language: LanguageDisplay!
   seoTitle: String
   seoDescription: String
   name: String
   description: JSONString
-  language: LanguageDisplay!
   descriptionJson: JSONString @deprecated(reason: "This field will be removed in Saleor 4.0. Use the `description` field instead.")
 }
 
 type ProductType implements Node & ObjectWithMetadata {
   id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   name: String!
   slug: String!
   hasVariants: Boolean!
   isShippingRequired: Boolean!
   isDigital: Boolean!
   weight: Weight
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   kind: ProductTypeKindEnum!
   products(channel: String, before: String, after: String, first: Int, last: Int): ProductCountableConnection @deprecated(reason: "This field will be removed in Saleor 4.0. Use the top-level `products` query with the `productTypes` filter.")
   taxType: TaxType
@@ -5708,14 +5708,14 @@ type ProductUpdate {
 
 type ProductVariant implements Node & ObjectWithMetadata {
   id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   name: String!
   sku: String
   product: Product!
   trackInventory: Boolean!
   quantityLimitPerCustomer: Int
   weight: Weight
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   channel: String
   channelListings: [ProductVariantChannelListing!]
   pricing(address: AddressInput): VariantPricingInfo
@@ -5885,8 +5885,8 @@ type ProductVariantTranslate {
 
 type ProductVariantTranslation implements Node {
   id: ID!
-  name: String!
   language: LanguageDisplay!
+  name: String!
 }
 
 type ProductVariantUpdate {
@@ -6016,12 +6016,12 @@ type RequestPasswordReset {
 
 type Sale implements Node & ObjectWithMetadata {
   id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   name: String!
   type: SaleType!
   startDate: DateTime!
   endDate: DateTime
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   categories(before: String, after: String, first: Int, last: Int): CategoryCountableConnection
   collections(before: String, after: String, first: Int, last: Int): CollectionCountableConnection
   products(before: String, after: String, first: Int, last: Int): ProductCountableConnection
@@ -6145,8 +6145,8 @@ type SaleTranslate {
 
 type SaleTranslation implements Node {
   id: ID!
-  name: String
   language: LanguageDisplay!
+  name: String
 }
 
 enum SaleType {
@@ -6245,10 +6245,10 @@ type ShippingMethodChannelListingUpdate {
 }
 
 type ShippingMethodPostalCodeRule implements Node {
+  id: ID!
   start: String
   end: String
   inclusionType: PostalCodeRuleInclusionTypeEnum
-  id: ID!
 }
 
 type ShippingMethodTranslatableContent implements Node {
@@ -6261,9 +6261,9 @@ type ShippingMethodTranslatableContent implements Node {
 
 type ShippingMethodTranslation implements Node {
   id: ID!
+  language: LanguageDisplay!
   name: String
   description: JSONString
-  language: LanguageDisplay!
 }
 
 enum ShippingMethodTypeEnum {
@@ -6346,10 +6346,10 @@ type ShippingPriceUpdate {
 
 type ShippingZone implements Node & ObjectWithMetadata {
   id: ID!
-  name: String!
-  default: Boolean!
   privateMetadata: [MetadataItem]!
   metadata: [MetadataItem]!
+  name: String!
+  default: Boolean!
   priceRange: MoneyRange
   countries: [CountryDisplay]
   shippingMethods: [ShippingMethod]
@@ -6529,9 +6529,9 @@ type ShopSettingsUpdate {
 
 type ShopTranslation implements Node {
   id: ID!
+  language: LanguageDisplay!
   headerText: String!
   description: String!
-  language: LanguageDisplay!
 }
 
 input SiteDomainInput {
@@ -6583,10 +6583,10 @@ enum StaffMemberStatus {
 }
 
 type StaffNotificationRecipient implements Node {
-  user: User
-  active: Boolean
   id: ID!
+  user: User
   email: String
+  active: Boolean
 }
 
 type StaffNotificationRecipientCreate {
@@ -6635,10 +6635,10 @@ input StaffUserInput {
 }
 
 type Stock implements Node {
+  id: ID!
   warehouse: Warehouse!
   productVariant: ProductVariant!
   quantity: Int!
-  id: ID!
   quantityAllocated: Int!
   quantityReserved: Int!
 }
@@ -6828,22 +6828,18 @@ enum UploadErrorCode {
 
 type User implements Node & ObjectWithMetadata {
   id: ID!
-  lastLogin: DateTime
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   email: String!
   firstName: String!
   lastName: String!
   isStaff: Boolean!
   isActive: Boolean!
-  note: String
-  dateJoined: DateTime!
-  defaultShippingAddress: Address
-  defaultBillingAddress: Address
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   addresses: [Address]
   checkout: Checkout @deprecated(reason: "This field will be removed in Saleor 4.0. Use the `checkout_tokens` field to fetch the user checkouts.")
   checkoutTokens(channel: String): [UUID!]
   giftCards(before: String, after: String, first: Int, last: Int): GiftCardCountableConnection
+  note: String
   orders(before: String, after: String, first: Int, last: Int): OrderCountableConnection
   userPermissions: [UserPermission]
   permissionGroups: [Group]
@@ -6852,6 +6848,10 @@ type User implements Node & ObjectWithMetadata {
   events: [CustomerEvent]
   storedPaymentSources(channel: String): [PaymentSource]
   languageCode: LanguageCodeEnum!
+  defaultShippingAddress: Address
+  defaultBillingAddress: Address
+  lastLogin: DateTime
+  dateJoined: DateTime!
 }
 
 type UserAvatarDelete {
@@ -6975,8 +6975,9 @@ enum VolumeUnitsEnum {
 
 type Voucher implements Node & ObjectWithMetadata {
   id: ID!
+  privateMetadata: [MetadataItem]!
+  metadata: [MetadataItem]!
   name: String
-  type: VoucherTypeEnum!
   code: String!
   usageLimit: Int
   used: Int!
@@ -6985,19 +6986,18 @@ type Voucher implements Node & ObjectWithMetadata {
   applyOncePerOrder: Boolean!
   applyOncePerCustomer: Boolean!
   onlyForStaff: Boolean!
-  discountValueType: DiscountValueTypeEnum!
   minCheckoutItemsQuantity: Int
-  privateMetadata: [MetadataItem]!
-  metadata: [MetadataItem]!
   categories(before: String, after: String, first: Int, last: Int): CategoryCountableConnection
   collections(before: String, after: String, first: Int, last: Int): CollectionCountableConnection
   products(before: String, after: String, first: Int, last: Int): ProductCountableConnection
   variants(before: String, after: String, first: Int, last: Int): ProductVariantCountableConnection
   countries: [CountryDisplay]
   translation(languageCode: LanguageCodeEnum!): VoucherTranslation
+  discountValueType: DiscountValueTypeEnum!
   discountValue: Float
   currency: String
   minSpent: Money
+  type: VoucherTypeEnum!
   channelListings: [VoucherChannelListing!]
 }
 
@@ -7132,8 +7132,8 @@ type VoucherTranslate {
 
 type VoucherTranslation implements Node {
   id: ID!
-  name: String
   language: LanguageDisplay!
+  name: String
 }
 
 enum VoucherTypeEnum {
@@ -7150,13 +7150,13 @@ type VoucherUpdate {
 
 type Warehouse implements Node & ObjectWithMetadata {
   id: ID!
-  name: String!
-  slug: String!
-  address: Address!
-  email: String!
-  isPrivate: Boolean!
   privateMetadata: [MetadataItem]!
   metadata: [MetadataItem]!
+  name: String!
+  slug: String!
+  email: String!
+  isPrivate: Boolean!
+  address: Address!
   companyName: String! @deprecated(reason: "This field will be removed in Saleor 4.0. Use `Address.companyName` instead.")
   clickAndCollectOption: WarehouseClickAndCollectOptionEnum!
   shippingZones(before: String, after: String, first: Int, last: Int): ShippingZoneCountableConnection!
@@ -7258,15 +7258,15 @@ input WarehouseUpdateInput {
 }
 
 type Webhook implements Node {
-  name: String!
-  targetUrl: String!
-  isActive: Boolean!
-  secretKey: String
   id: ID!
+  name: String!
   events: [WebhookEvent!]! @deprecated(reason: "This field will be removed in Saleor 4.0. Use `asyncEvents` or `syncEvents` instead.")
   syncEvents: [WebhookEventSync!]!
   asyncEvents: [WebhookEventAsync!]!
   app: App!
+  targetUrl: String!
+  isActive: Boolean!
+  secretKey: String
 }
 
 type WebhookCreate {
@@ -7307,18 +7307,18 @@ enum WebhookErrorCode {
 }
 
 type WebhookEvent {
-  eventType: WebhookEventTypeEnum!
   name: String!
+  eventType: WebhookEventTypeEnum!
 }
 
 type WebhookEventAsync {
-  eventType: WebhookEventTypeAsyncEnum!
   name: String!
+  eventType: WebhookEventTypeAsyncEnum!
 }
 
 type WebhookEventSync {
-  eventType: WebhookEventTypeSyncEnum!
   name: String!
+  eventType: WebhookEventTypeSyncEnum!
 }
 
 enum WebhookEventTypeAsyncEnum {

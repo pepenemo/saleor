@@ -41,8 +41,8 @@ from .enums import PostalCodeRuleInclusionTypeEnum, ShippingMethodTypeEnum
 class ShippingMethodChannelListing(ModelObjectType):
     id = graphene.GlobalID(required=True)
     channel = graphene.Field(Channel, required=True)
-    maximum_order_price = graphene.Field(Money)
     minimum_order_price = graphene.Field(Money)
+    maximum_order_price = graphene.Field(Money)
     price = graphene.Field(Money)
 
     class Meta:
