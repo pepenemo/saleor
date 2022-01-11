@@ -1,4 +1,3 @@
-from django.http import request
 import graphene
 
 from ...webhook import models
