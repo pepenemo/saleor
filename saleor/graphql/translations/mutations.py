@@ -17,7 +17,6 @@ from ..core.mutations import BaseMutation, ModelMutation
 from ..core.types.common import TranslationError
 from ..discount.types import Sale, Voucher
 from ..menu.types import MenuItem
-from ..page.types import Page
 from ..product.types import Category, Collection, Product, ProductVariant
 from ..shipping import types as shipping_types
 from ..shop.types import Shop
